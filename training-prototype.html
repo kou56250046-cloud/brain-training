@@ -335,20 +335,9 @@ canvas{margin-top:1rem;max-height:300px;}
         <div><label>沈黙の秒数（推奨3〜5）</label><input type="number" id="silenceSec" value="3" min="1" max="10"></div>
       </div>
       <div class="divider"></div>
-      <h3 style="font-size:1.05rem">📚 練習テキストの読み込み（フラッシュ用）</h3>
-      <label>① GitHubから選ぶ（リポジトリの <code>texts/index.json</code> を読み込みます）</label>
-      <div class="row">
-        <input type="text" id="ghBase" placeholder="例: https://raw.githubusercontent.com/ユーザー名/リポジトリ/main/">
-        <button class="btn ghost" id="ghLoad">一覧を取得</button>
-      </div>
-      <select id="textSelect" style="margin-top:.6rem"><option value="">―― 内蔵サンプルから選ぶ ――</option></select>
-      <label style="margin-top:.6rem">② 直接貼り付け / ③ テキストファイル</label>
-      <textarea id="textArea" placeholder="ここに練習用テキストを貼り付けてもOK"></textarea>
-      <div class="btn-row">
-        <input type="file" id="textFile" accept=".txt" style="max-width:240px">
-        <button class="btn ghost" id="applyText">このテキストを使う</button>
-      </div>
-      <div class="help" id="textStatus">内蔵サンプル「五感を研ぎ澄ます効果」を読み込み済みです。</div>
+      <h3 style="font-size:1.05rem">📚 練習テキストを選ぶ（フラッシュ用）</h3>
+      <select id="textSelect"><option value="">―― テキストを選ぶ ――</option></select>
+      <div class="help" id="textStatus">テキストを選択してください。</div>
     </div>
   </div>
 
@@ -969,20 +958,6 @@ $("#textSelect").addEventListener("change",async e=>{
     catch(err){$("#textStatus").textContent="取得に失敗しました（URL/公開設定/CORSを確認）。";}
   }
 });
-$("#ghLoad").addEventListener("click",async()=>{
-  const base=$("#ghBase").value.trim();if(!base){alert("リポジトリのraw URLを入力してください");return;}
-  const url=base.replace(/\/?$/,"/")+"texts/index.json";
-  try{
-    $("#textStatus").textContent="一覧を取得中…";
-    const r=await fetch(url);const list=await r.json();
-    const sel=$("#textSelect");[...sel.querySelectorAll('option[data-gh]')].forEach(o=>o.remove());
-    list.forEach(it=>{const o=document.createElement("option");o.dataset.gh="1";
-      o.value=base.replace(/\/?$/,"/")+it.file;o.textContent=`${it.title}（GitHub）`;sel.appendChild(o);});
-    $("#textStatus").textContent=`GitHubから${list.length}件を読み込みました。`;
-  }catch(err){$("#textStatus").textContent="index.jsonの取得に失敗しました。URL・公開設定をご確認ください。";}
-});
-$("#applyText").addEventListener("click",()=>{const t=$("#textArea").value.trim();if(t){setText(t,"貼り付けテキスト");}});
-$("#textFile").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>setText(ev.target.result,f.name);r.readAsText(f);});
 
 /* フォント倍率 */
 $("#fontScale").addEventListener("input",e=>{document.documentElement.style.setProperty("--fs-mult",e.target.value);$("#fsVal").textContent=Number(e.target.value).toFixed(2);});

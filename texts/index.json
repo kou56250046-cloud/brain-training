@@ -2,7 +2,7 @@
   {
     "id": "gokan",
     "title": "五感を研ぎ澄ます効果",
-    "file": "texts/gokan.txt",
+    "file": "texts/flash/gokan.txt",
     "category": "脳・感覚",
     "questions": [
       {
@@ -50,7 +50,7 @@
   {
     "id": "kioku-gijutsu",
     "title": "記憶は技術である",
-    "file": "texts/kioku-gijutsu.txt",
+    "file": "texts/flash/kioku-gijutsu.txt",
     "category": "記憶",
     "questions": [
       {
@@ -98,7 +98,7 @@
   {
     "id": "shunkan-chikaku",
     "title": "瞬間知覚と脳のしくみ",
-    "file": "texts/shunkan-chikaku.txt",
+    "file": "texts/flash/shunkan-chikaku.txt",
     "category": "脳・感覚",
     "questions": [
       {
@@ -146,7 +146,7 @@
   {
     "id": "shuukan-no-chikara",
     "title": "習慣の力",
-    "file": "texts/shuukan-no-chikara.txt",
+    "file": "texts/flash/shuukan-no-chikara.txt",
     "category": "習慣",
     "questions": [
       {
@@ -194,7 +194,7 @@
   {
     "id": "chishiki-no-tobira",
     "title": "知識の扉を開く",
-    "file": "texts/chishiki-no-tobira.txt",
+    "file": "texts/flash/chishiki-no-tobira.txt",
     "category": "学習",
     "questions": [
       {
