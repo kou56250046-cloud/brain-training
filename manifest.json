@@ -1,0 +1,15 @@
+{
+  "name": "瞬読・記憶法トレーニング",
+  "short_name": "瞬読トレーニング",
+  "description": "瞬読と記憶法を学べて鍛えられる一体型トレーニングサイト",
+  "start_url": "./training-prototype.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f6f2e9",
+  "theme_color": "#2f6f64",
+  "lang": "ja",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
