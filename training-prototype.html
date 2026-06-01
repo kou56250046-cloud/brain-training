@@ -291,12 +291,7 @@ canvas{margin-top:1rem;max-height:300px;}
       <h3>🧠 フラッシュトレーニング</h3>
       <div class="why"><b>意義：</b>テキストを一定の量ずつ高速表示し、声にする前に視覚で受け取る回路を育てます。<b>やり方：</b>表示されるかたまりを「読もう」とせず、ぼんやり全体を見るだけ。題材は下のプルダウンから選びます。</div>
       <div class="row3">
-        <div><label>表示単位</label>
-          <select id="flashMode">
-            <option value="c10">10文字</option><option value="c20">20文字</option>
-            <option value="c30">30文字</option><option value="s1">1文</option>
-            <option value="s2">2文</option><option value="para">段落</option>
-          </select></div>
+        <div><label>表示文字数</label><input type="number" id="flashChars" value="15" min="5" max="200" step="1"></div>
         <div><label>表示速度(秒)</label><input type="number" id="flashSpeed" value="1" min="0.2" max="4" step="0.1"></div>
         <div><label>練習時間(分)</label><input type="number" id="flashTime" value="2" min="1" max="30"></div>
       </div>
@@ -653,16 +648,13 @@ $("#shunCsv").addEventListener("click",()=>{const h=getShun();if(!h.length)retur
 /* ============================================================
    瞬読：フラッシュ / 単語 / 円形 / ランダム
 ============================================================ */
-function chunkText(mode){
-  if(mode.startsWith("c")){const n=Number(mode.slice(1));const arr=[];for(let i=0;i<currentText.length;i+=n)arr.push(currentText.slice(i,i+n));return arr;}
-  if(mode==="s1")return sentPool.map(s=>s+"。");
-  if(mode==="s2"){const a=[];for(let i=0;i<sentPool.length;i+=2)a.push(sentPool.slice(i,i+2).join("。")+"。");return a;}
-  if(mode==="para")return currentText.split(/\n+/).filter(p=>p.trim());
-  return [currentText];
+function chunkText(){
+  const n=Number($("#flashChars").value)||15;
+  const arr=[];for(let i=0;i<currentText.length;i+=n)arr.push(currentText.slice(i,i+n));return arr;
 }
 let flashIv,flashCd;
 $("#flashStart").onclick=()=>{
-  stopFlash();const chunks=chunkText($("#flashMode").value);if(!chunks.length)return alert("テキストを読み込んでください");
+  stopFlash();const chunks=chunkText();if(!chunks.length)return alert("テキストを読み込んでください");
   let total=Number($("#flashTime").value)*60,spd=Number($("#flashSpeed").value)*1000,i=0;
   $("#flashTimer").textContent=fmt(total);
   flashCd=setInterval(()=>{total--;$("#flashTimer").textContent=fmt(total);if(total<=0)stopFlash(true);},1000);
