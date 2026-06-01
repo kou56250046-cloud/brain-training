@@ -387,6 +387,7 @@ canvas{margin-top:1rem;max-height:300px;}
       <div class="why"><b>意義：</b>短い文章を一気に表示し、瞬時にその情景を頭の中で組み立てる練習です。文字を音に変換せず、映像として直接受け取る回路を育てます。<b>やり方：</b>文章が丸ごと1文表示されます。声に出さず、映像として受け取ってください。消えたら、浮かんだ情景を頭の中で保ちます。</div>
       <div class="row">
         <div><label>表示時間(秒)</label><input type="number" id="imgSpeed" value="2" min="0.5" max="10" step="0.5"></div>
+        <div><label>書字方向</label><select id="imgDir"><option value="h">横書き</option><option value="v">縦書き</option></select></div>
       </div>
       <div class="row" style="margin-top:.6rem">
         <div><label>フォント倍率 <span class="fs-val">1.00</span>倍</label><input type="range" class="font-scale-slider" min="0.8" max="2.5" step="0.05" value="1"></div>
@@ -726,7 +727,8 @@ function imgStartFlash(){
   const sentence=pool[imgCharIdx%pool.length];
   const duration=Number($("#imgSpeed").value)*1000;
   const stage=$("#imgStage");
-  stage.className="stage big";
+  const isVertical=$("#imgDir").value==="v";
+  stage.className="stage big"+(isVertical?" vertical":"");
   stage.textContent=sentence;
   $("#imgAnswer").style.display="none";$("#imgResult").innerHTML="";
   imgCharIv=setTimeout(()=>{
