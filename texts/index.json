@@ -522,6 +522,34 @@
     "questions": []
   },
   {
+    "id": "genrikoron-darakuron-1",
+    "title": "原理講論・堕落論１",
+    "file": "texts/flash/原理講論-堕落論1.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-darakuron-2",
+    "title": "原理講論・堕落論２",
+    "file": "texts/flash/原理講論-堕落論2.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-darakuron-3",
+    "title": "原理講論・堕落論３",
+    "file": "texts/flash/原理講論-堕落論3.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-darakuron-4",
+    "title": "原理講論・堕落論４",
+    "file": "texts/flash/原理講論-堕落論4.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
     "id": "souki-no-juyousei",
     "title": "想起することの重要性",
     "file": "texts/flash/souki-no-juyousei.txt",
