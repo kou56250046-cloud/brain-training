@@ -550,6 +550,41 @@
     "questions": []
   },
   {
+    "id": "genrikoron-shumatsuron-1",
+    "title": "原理講論・終末論１",
+    "file": "texts/flash/原理講論-終末論1.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-shumatsuron-2",
+    "title": "原理講論・終末論２",
+    "file": "texts/flash/原理講論-終末論2.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-shumatsuron-3",
+    "title": "原理講論・終末論３",
+    "file": "texts/flash/原理講論-終末論3.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-shumatsuron-4",
+    "title": "原理講論・終末論４",
+    "file": "texts/flash/原理講論-終末論4.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-shumatsuron-5",
+    "title": "原理講論・終末論５",
+    "file": "texts/flash/原理講論-終末論5.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
     "id": "souki-no-juyousei",
     "title": "想起することの重要性",
     "file": "texts/flash/souki-no-juyousei.txt",
