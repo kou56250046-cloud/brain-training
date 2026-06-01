@@ -480,6 +480,48 @@
     ]
   },
   {
+    "id": "genrikoron-sojo-1",
+    "title": "原理講論・創造原理１",
+    "file": "texts/flash/原理講論-創造原理1.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-sojo-2",
+    "title": "原理講論・創造原理２",
+    "file": "texts/flash/原理講論-創造原理2.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-sojo-3",
+    "title": "原理講論・創造原理３",
+    "file": "texts/flash/原理講論-創造原理3.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-sojo-4",
+    "title": "原理講論・創造原理４",
+    "file": "texts/flash/原理講論-創造原理4.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-sojo-5",
+    "title": "原理講論・創造原理５",
+    "file": "texts/flash/原理講論-創造原理5.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-sojo-6",
+    "title": "原理講論・創造原理６",
+    "file": "texts/flash/原理講論-創造原理6.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
     "id": "souki-no-juyousei",
     "title": "想起することの重要性",
     "file": "texts/flash/souki-no-juyousei.txt",
