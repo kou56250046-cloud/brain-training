@@ -585,6 +585,83 @@
     "questions": []
   },
   {
+    "id": "genrikoron-fukkatsuron-1",
+    "title": "原理講論・復活論１",
+    "file": "texts/flash/原理講論-復活論1.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-fukkatsuron-2",
+    "title": "原理講論・復活論２",
+    "file": "texts/flash/原理講論-復活論2.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-yoteiron-1",
+    "title": "原理講論・予定論１",
+    "file": "texts/flash/原理講論-予定論1.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-kirisutoron-1",
+    "title": "原理講論・キリスト論１",
+    "file": "texts/flash/原理講論-キリスト論1.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-kouhen-jron",
+    "title": "原理講論・後編緒論",
+    "file": "texts/flash/原理講論-後編緒論.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-fukki-kiban-1",
+    "title": "原理講論・復帰基台摂理時代１",
+    "file": "texts/flash/原理講論-復帰基台摂理時代1.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-fukki-kiban-2",
+    "title": "原理講論・復帰基台摂理時代２",
+    "file": "texts/flash/原理講論-復帰基台摂理時代2.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-fukki-kiban-3",
+    "title": "原理講論・復帰基台摂理時代３",
+    "file": "texts/flash/原理講論-復帰基台摂理時代3.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-moses-jesus-1",
+    "title": "原理講論・モーセとイエスを中心とする復帰摂理１",
+    "file": "texts/flash/原理講論-モーセとイエスを中心とする復帰摂理1.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-moses-jesus-2",
+    "title": "原理講論・モーセとイエスを中心とする復帰摂理２",
+    "file": "texts/flash/原理講論-モーセとイエスを中心とする復帰摂理2.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
+    "id": "genrikoron-moses-jesus-3",
+    "title": "原理講論・モーセとイエスを中心とする復帰摂理３",
+    "file": "texts/flash/原理講論-モーセとイエスを中心とする復帰摂理3.txt",
+    "category": "哲学・思想",
+    "questions": []
+  },
+  {
     "id": "souki-no-juyousei",
     "title": "想起することの重要性",
     "file": "texts/flash/souki-no-juyousei.txt",
