@@ -523,6 +523,7 @@ const shuffleChars=w=>{const a=[...w];for(let i=a.length-1;i>0;i--){const j=Math
 function setupTabs(group){
   $$(`[data-group="${group}"] .nav-tab`).forEach(tab=>{
     tab.addEventListener("click",()=>{
+      stopFlash();stopWord();stopCircle();stopRand();
       const target=tab.dataset.target;
       $$(`[data-group="${group}"] .nav-tab`).forEach(t=>t.classList.remove("active"));
       tab.classList.add("active");
@@ -544,6 +545,7 @@ function openDetail(id){
   window.scrollTo({top:0,behavior:"smooth"});
 }
 function backToMenu(grp){
+  stopFlash();stopWord();stopCircle();stopRand();
   $$(`.detail[data-detail-group="${grp}"]`).forEach(d=>d.classList.remove("show"));
   const m=document.getElementById(grp+"-menu");m.classList.add("show");
   window.scrollTo({top:0,behavior:"smooth"});
@@ -603,7 +605,7 @@ $("#textSelect").addEventListener("change",async e=>{
   const v=e.target.value;if(!v)return;
   if(v.startsWith("builtin:")){const k=v.slice(8);setText(BUILTIN[k],k);}
   else{
-    try{$("#textStatus").textContent="取得中…";const r=await fetch(v);const t=await r.text();setText(t,v.split("/").pop());}
+    try{$("#textStatus").textContent="取得中…";const r=await fetch(v);if(!r.ok)throw new Error(r.status);const t=await r.text();setText(t,v.split("/").pop());}
     catch(err){$("#textStatus").textContent="取得に失敗しました（URL/公開設定/CORSを確認）。";}
   }
 });
@@ -627,7 +629,7 @@ function beginSilence(sec){
    瞬読：記録
 ============================================================ */
 const SHUN_KEY="shun_history";
-const getShun=()=>JSON.parse(localStorage.getItem(SHUN_KEY)||"[]");
+const getShun=()=>{try{return JSON.parse(localStorage.getItem(SHUN_KEY)||"[]");}catch{localStorage.removeItem(SHUN_KEY);return [];}};
 const setShun=d=>localStorage.setItem(SHUN_KEY,JSON.stringify(d));
 function addShun(type,min,res){const h=getShun();h.push({date:nowStr(),type,min:Number(min)||0,res:String(res)});setShun(h);drawShunChart();}
 let shunChart;
@@ -761,13 +763,13 @@ $("#obsCheck").onclick=()=>{
 
 
 /* 瞬読 実力テスト */
-let stLen=3,stCur="";
+let stLen=3,stCur="",stTimerId=null;
 function stTitleOf(len){return len>=9?"🚀 一瞬の達人":len>=7?"⚡ 速読上級":len>=5?"📗 速読中級":"🌱 入門";}
-$("#stStart").onclick=()=>{stLen=3;$("#stResult").innerHTML="";$("#stTitle").innerHTML="";stShow();};
+$("#stStart").onclick=()=>{clearTimeout(stTimerId);stLen=3;$("#stResult").innerHTML="";$("#stTitle").innerHTML="";stShow();};
 function stShow(){
   stCur=Array.from({length:stLen},()=>rand(0,9)).join("");
   $("#stStage").textContent=stCur;$("#stAnswer").style.display="none";
-  setTimeout(()=>{$("#stStage").textContent="🙈";$("#stAnswer").style.display="block";$("#stInput").value="";$("#stInput").focus();},600);
+  stTimerId=setTimeout(()=>{$("#stStage").textContent="🙈";$("#stAnswer").style.display="block";$("#stInput").value="";$("#stInput").focus();},600);
 }
 $("#stCheck").onclick=()=>{
   const ans=$("#stInput").value.replace(/\D/g,"");
