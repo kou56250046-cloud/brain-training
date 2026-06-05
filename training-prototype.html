@@ -292,8 +292,8 @@ canvas{margin-top:1rem;max-height:300px;}
       <div class="why"><b>意義：</b>テキストを一定の量ずつ高速表示し、声にする前に視覚で受け取る回路を育てます。<b>やり方：</b>表示されるかたまりを「読もう」とせず、ぼんやり全体を見るだけ。題材は下のプルダウンから選びます。</div>
       <div class="row3">
         <div><label>表示文字数</label><input type="number" id="flashChars" value="15" min="5" max="200" step="1"></div>
-        <div><label>表示速度(秒)</label><input type="number" id="flashSpeed" value="1" min="0.2" max="4" step="0.1"></div>
-        <div><label>練習時間(分)</label><input type="number" id="flashTime" value="2" min="1" max="30"></div>
+        <div><label>表示速度(秒)</label><input type="number" id="flashSpeed" value="0.5" min="0.2" max="4" step="0.1"></div>
+        <div><label>練習時間(分)</label><input type="number" id="flashTime" value="3" min="1" max="30"></div>
       </div>
       <div class="row" style="margin-top:.6rem">
         <div><label>フォント倍率 <span class="fs-val">1.00</span>倍</label><input type="range" class="font-scale-slider" min="0.8" max="2.5" step="0.05" value="1"></div>
@@ -323,7 +323,7 @@ canvas{margin-top:1rem;max-height:300px;}
       </div>
       <div class="row" style="margin-top:.6rem">
         <div><label>フォント倍率 <span class="fs-val">1.00</span>倍</label><input type="range" class="font-scale-slider" min="0.8" max="2.5" step="0.05" value="1"></div>
-        <div><label><input type="checkbox" class="silence-on"> 右脳沈黙モード</label><input type="number" class="silence-sec" value="3" min="1" max="10"> 秒</div>
+        <div><label><input type="checkbox" class="silence-on" checked> 右脳沈黙モード</label><input type="number" class="silence-sec" value="2" min="1" max="10"> 秒</div>
       </div>
       <div class="btn-row"><button class="btn" id="wordStart">開始</button><button class="btn ghost" id="wordStop">停止</button></div>
       <div class="stage" id="wordStage">―</div>
@@ -339,12 +339,12 @@ canvas{margin-top:1rem;max-height:300px;}
       <h3>🌀 円形トレーニング</h3>
       <div class="why"><b>意義：</b>文字を円状に置くことで、視点を一点に止めず“面”で捉える感覚を養います。<b>やり方：</b>内蔵の日常単語を円状に配置（並びはシャッフル）。中心をぼんやり見て、周囲の文字を同時に感じてみてください。</div>
       <div class="row">
-        <div><label>切替速度(秒)</label><input type="number" id="circleSpeed" value="1.2" min="0.3" max="4" step="0.1"></div>
+        <div><label>切替速度(秒)</label><input type="number" id="circleSpeed" value="0.5" min="0.3" max="4" step="0.1"></div>
         <div><label>練習時間(分)</label><input type="number" id="circleTime" value="2" min="1" max="30"></div>
       </div>
       <div class="row" style="margin-top:.6rem">
         <div><label>フォント倍率 <span class="fs-val">1.00</span>倍</label><input type="range" class="font-scale-slider" min="0.8" max="2.5" step="0.05" value="1"></div>
-        <div><label><input type="checkbox" class="silence-on"> 右脳沈黙モード</label><input type="number" class="silence-sec" value="3" min="1" max="10"> 秒</div>
+        <div><label><input type="checkbox" class="silence-on" checked> 右脳沈黙モード</label><input type="number" class="silence-sec" value="2" min="1" max="10"> 秒</div>
       </div>
       <div class="btn-row"><button class="btn" id="circleStart">開始</button><button class="btn ghost" id="circleStop">停止</button></div>
       <div class="field" id="circleField"></div>
@@ -360,12 +360,12 @@ canvas{margin-top:1rem;max-height:300px;}
       <h3>🎲 ランダム配置トレーニング</h3>
       <div class="why"><b>意義：</b>バラバラに散った文字を一瞬で拾い集める練習。周辺視野と注意の広さを鍛えます。<b>やり方：</b>内蔵の日常単語の文字を画面内にばら撒きます。「どこに何があったか」を後から思い出すつもりで眺めましょう。</div>
       <div class="row">
-        <div><label>切替速度(秒)</label><input type="number" id="randSpeed" value="1.2" min="0.3" max="4" step="0.1"></div>
+        <div><label>切替速度(秒)</label><input type="number" id="randSpeed" value="0.5" min="0.3" max="4" step="0.1"></div>
         <div><label>練習時間(分)</label><input type="number" id="randTime" value="2" min="1" max="30"></div>
       </div>
       <div class="row" style="margin-top:.6rem">
         <div><label>フォント倍率 <span class="fs-val">1.00</span>倍</label><input type="range" class="font-scale-slider" min="0.8" max="2.5" step="0.05" value="1"></div>
-        <div><label><input type="checkbox" class="silence-on"> 右脳沈黙モード</label><input type="number" class="silence-sec" value="3" min="1" max="10"> 秒</div>
+        <div><label><input type="checkbox" class="silence-on" checked> 右脳沈黙モード</label><input type="number" class="silence-sec" value="2" min="1" max="10"> 秒</div>
       </div>
       <div class="btn-row"><button class="btn" id="randStart">開始</button><button class="btn ghost" id="randStop">停止</button></div>
       <div class="field" id="randField"></div>
