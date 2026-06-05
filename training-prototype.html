@@ -196,6 +196,11 @@ canvas{margin-top:1rem;max-height:300px;}
 /* ===== 速読テスト ===== */
 .reading-text{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1.2rem 1.4rem;
   max-height:50vh;overflow-y:auto;font-size:1.05rem;line-height:2;white-space:pre-wrap;word-break:break-all;}
+/* ===== BGM ===== */
+.bgm-item{display:flex;align-items:center;gap:.6rem;padding:.35rem .2rem;border-radius:6px;transition:background .15s;}
+.bgm-item:hover{background:color-mix(in srgb,var(--accent) 6%,transparent);}
+.bgm-item input[type=checkbox]{width:1rem;height:1rem;accent-color:var(--accent);flex-shrink:0;}
+.bgm-item .bgm-name{font-size:.9rem;flex:1;}
 </style>
 </head>
 <body>
@@ -255,6 +260,7 @@ canvas{margin-top:1rem;max-height:300px;}
       <div class="menu-card" data-open="s-test"><span class="ic">🏁</span><h4>実力テスト</h4><p>到達桁数で称号判定</p><span class="arrow">→</span></div>
       <div class="menu-card" data-open="s-reading-test"><span class="ic">📏</span><h4>速読テスト</h4><p>速度×理解度を測定</p><span class="arrow">→</span></div>
       <div class="menu-card" data-open="s-log"><span class="ic">📈</span><h4>記録</h4><p>練習履歴とグラフ</p><span class="arrow">→</span></div>
+      <div class="menu-card" data-open="s-bgm"><span class="ic">🎵</span><h4>BGM設定</h4><p>トレーニング中の音楽</p><span class="arrow">→</span></div>
     </div>
   </div>
 
@@ -492,6 +498,25 @@ canvas{margin-top:1rem;max-height:300px;}
       <table><thead><tr><th>日時</th><th>種類</th><th>分</th><th>速度/結果</th></tr></thead><tbody id="shunTable"></tbody></table>
     </div>
   </div>
+
+  <!-- BGM設定 -->
+  <div class="detail" id="s-bgm" data-detail-group="shun">
+    <div class="backbar"><button class="back-btn" data-back="shun">← 一覧へ</button><span class="detail-title">🎵 BGM設定</span></div>
+    <div class="card">
+      <span class="tag">BGM・音声</span>
+      <h3>🎵 BGM設定</h3>
+      <div class="why"><b>使い方：</b>再生したい音声にチェックを入れてください。各トレーニングの「開始」ボタンを押すと自動的に再生が始まり、「停止」ボタンで止まります。複数選択した場合はランダムに1曲が選ばれます。</div>
+      <label style="font-weight:600;display:block;margin-bottom:.5rem">内蔵BGM</label>
+      <div id="bgmItems" style="border:1px solid var(--line);border-radius:10px;padding:.6rem .8rem;background:#fff;display:flex;flex-direction:column;gap:.4rem;"></div>
+      <label style="font-weight:600;display:block;margin-top:1rem;margin-bottom:.3rem">音声ファイルを追加</label>
+      <input type="file" id="bgmFileInput" accept="audio/*" multiple style="display:block;font-size:.9rem;margin-bottom:.6rem;">
+      <div style="margin-top:.8rem">
+        <label>音量 <span id="bgmVolVal">70</span>%</label>
+        <input type="range" id="bgmVol" min="0" max="100" value="70" style="width:100%">
+      </div>
+      <div class="note" id="bgmStatus" style="margin-top:.6rem;">音声を選択してトレーニングを開始してください。</div>
+    </div>
+  </div>
 </section>
 
 
@@ -501,6 +526,71 @@ canvas{margin-top:1rem;max-height:300px;}
 <div id="silence"><div class="box"><div class="prog"><i id="silBar"></i></div><div class="cnt" id="silCnt"></div></div></div>
 
 <script>
+/* ============================================================
+   BGM 管理
+============================================================ */
+const BGM_BUILTIN=[
+  {id:"432hz",name:"432Hz",file:"sounds/432Hz.mp3"},
+  {id:"528hz",name:"528Hz",file:"sounds/528Hz.mp3"},
+];
+const bgm={
+  tracks:[],_nextId:0,currentAudio:null,
+  add(name,src,builtin=false){
+    const audio=new Audio(src);audio.loop=true;
+    const track={id:bgm._nextId++,name,audio,builtin};
+    bgm.tracks.push(track);bgmRenderList();return track;
+  },
+  remove(id){
+    const idx=bgm.tracks.findIndex(t=>t.id===id);if(idx===-1)return;
+    const track=bgm.tracks[idx];
+    if(bgm.currentAudio===track.audio)bgm.stop();
+    track.audio.src="";bgm.tracks.splice(idx,1);bgmRenderList();
+  },
+  play(){
+    bgm.stop();
+    const checked=bgm.tracks.filter(t=>{const cb=document.getElementById("bgm-cb-"+t.id);return cb&&cb.checked;});
+    if(!checked.length)return;
+    const track=checked[Math.floor(Math.random()*checked.length)];
+    track.audio.volume=(Number(document.getElementById("bgmVol")?.value)||70)/100;
+    track.audio.currentTime=0;track.audio.play().catch(()=>{});
+    bgm.currentAudio=track.audio;bgmUpdateStatus();
+  },
+  stop(){
+    if(bgm.currentAudio){bgm.currentAudio.pause();bgm.currentAudio.currentTime=0;bgm.currentAudio=null;}
+    bgmUpdateStatus();
+  }
+};
+function bgmRenderList(){
+  const container=document.getElementById("bgmItems");if(!container)return;
+  container.innerHTML=bgm.tracks.map(t=>`
+    <div class="bgm-item">
+      <input type="checkbox" id="bgm-cb-${t.id}" checked>
+      <label class="bgm-name" for="bgm-cb-${t.id}">${t.name}</label>
+      ${t.builtin?"":` <span style="font-size:.75rem;color:var(--muted);cursor:pointer;border:1px solid var(--line);border-radius:6px;padding:.1rem .4rem;" onclick="bgm.remove(${t.id})">削除</span>`}
+    </div>`).join("");
+  bgmUpdateStatus();
+}
+function bgmUpdateStatus(){
+  const el=document.getElementById("bgmStatus");if(!el)return;
+  if(bgm.currentAudio){
+    const t=bgm.tracks.find(t=>t.audio===bgm.currentAudio);
+    el.textContent="再生中: "+(t?t.name:"");
+  }else{
+    const n=bgm.tracks.filter(t=>{const cb=document.getElementById("bgm-cb-"+t.id);return cb&&cb.checked;}).length;
+    el.textContent=n?n+"件 選択中（トレーニング開始時に再生）":"音声が選択されていません";
+  }
+}
+function initBgmUI(){
+  BGM_BUILTIN.forEach(b=>bgm.add(b.name,b.file,true));
+  const fi=document.getElementById("bgmFileInput");
+  if(fi)fi.addEventListener("change",e=>{[...e.target.files].forEach(f=>bgm.add(f.name,URL.createObjectURL(f)));fi.value="";});
+  const vol=document.getElementById("bgmVol");
+  if(vol)vol.addEventListener("input",()=>{
+    document.getElementById("bgmVolVal").textContent=vol.value;
+    if(bgm.currentAudio)bgm.currentAudio.volume=Number(vol.value)/100;
+  });
+}
+
 /* ============================================================
    ユーティリティ
 ============================================================ */
@@ -523,7 +613,7 @@ const shuffleChars=w=>{const a=[...w];for(let i=a.length-1;i>0;i--){const j=Math
 function setupTabs(group){
   $$(`[data-group="${group}"] .nav-tab`).forEach(tab=>{
     tab.addEventListener("click",()=>{
-      stopFlash();stopWord();stopCircle();stopRand();
+      stopFlash();stopWord();stopCircle();stopRand();bgm.stop();
       const target=tab.dataset.target;
       $$(`[data-group="${group}"] .nav-tab`).forEach(t=>t.classList.remove("active"));
       tab.classList.add("active");
@@ -545,7 +635,7 @@ function openDetail(id){
   window.scrollTo({top:0,behavior:"smooth"});
 }
 function backToMenu(grp){
-  stopFlash();stopWord();stopCircle();stopRand();
+  stopFlash();stopWord();stopCircle();stopRand();clearTimeout(imgCharIv);bgm.stop();
   $$(`.detail[data-detail-group="${grp}"]`).forEach(d=>d.classList.remove("show"));
   const m=document.getElementById(grp+"-menu");m.classList.add("show");
   window.scrollTo({top:0,behavior:"smooth"});
@@ -656,7 +746,7 @@ function chunkText(){
 }
 let flashIv,flashCd;
 $("#flashStart").onclick=()=>{
-  stopFlash();const chunks=chunkText();if(!chunks.length)return alert("テキストを読み込んでください");
+  bgm.play();stopFlash();const chunks=chunkText();if(!chunks.length)return alert("テキストを読み込んでください");
   let total=Number($("#flashTime").value)*60,spd=Number($("#flashSpeed").value)*1000,i=0;
   $("#flashTimer").textContent=fmt(total);
   flashCd=setInterval(()=>{total--;$("#flashTimer").textContent=fmt(total);if(total<=0)stopFlash(true);},1000);
@@ -665,10 +755,10 @@ $("#flashStart").onclick=()=>{
     if(fSilOn&&fSilOn.checked)setTimeout(()=>{if(!silenceLock)beginSilence(fSilSec);},spd*0.7);},spd);
 };
 $("#flashStop").onclick=()=>stopFlash(true);
-function stopFlash(log){clearInterval(flashIv);clearInterval(flashCd);if(log){$("#flashStage").textContent="―";$("#flashTimer").textContent="停止";addShun("フラッシュ",$("#flashTime").value,$("#flashSpeed").value+"秒");}}
+function stopFlash(log){clearInterval(flashIv);clearInterval(flashCd);if(log){bgm.stop();$("#flashStage").textContent="―";$("#flashTimer").textContent="停止";addShun("フラッシュ",$("#flashTime").value,$("#flashSpeed").value+"秒");}}
 
 let wordIv,wordCd;
-$("#wordStart").onclick=()=>{stopWord();
+$("#wordStart").onclick=()=>{bgm.play();stopWord();
   let total=Number($("#wordTime").value)*60,spd=Number($("#wordSpeed").value)*1000;$("#wordTimer").textContent=fmt(total);
   const stage=$("#wordStage");stage.classList.toggle("vertical",$("#wordDir").value==="v");
   wordCd=setInterval(()=>{total--;$("#wordTimer").textContent=fmt(total);if(total<=0)stopWord(true);},1000);
@@ -676,10 +766,10 @@ $("#wordStart").onclick=()=>{stopWord();
     const wSilOn=document.querySelector("#s-word .silence-on"),wSilSec=Number(document.querySelector("#s-word .silence-sec").value)||3;
     if(wSilOn&&wSilOn.checked)setTimeout(()=>{if(!silenceLock)beginSilence(wSilSec);},spd*0.7);},spd);};
 $("#wordStop").onclick=()=>stopWord(true);
-function stopWord(log){clearInterval(wordIv);clearInterval(wordCd);const stage=$("#wordStage");stage.classList.remove("vertical");if(log){stage.textContent="―";$("#wordTimer").textContent="停止";addShun("単語",$("#wordTime").value,$("#wordSpeed").value+"秒");}}
+function stopWord(log){clearInterval(wordIv);clearInterval(wordCd);const stage=$("#wordStage");stage.classList.remove("vertical");if(log){bgm.stop();stage.textContent="―";$("#wordTimer").textContent="停止";addShun("単語",$("#wordTime").value,$("#wordSpeed").value+"秒");}}
 
 let circleIv,circleCd;
-$("#circleStart").onclick=()=>{stopCircle();
+$("#circleStart").onclick=()=>{bgm.play();stopCircle();
   let total=Number($("#circleTime").value)*60,spd=Number($("#circleSpeed").value)*1000;$("#circleTimer").textContent=fmt(total);
   circleCd=setInterval(()=>{total--;$("#circleTimer").textContent=fmt(total);if(total<=0)stopCircle(true);},1000);
   const f=$("#circleField");
@@ -691,10 +781,10 @@ $("#circleStart").onclick=()=>{stopCircle();
     setTimeout(()=>f.innerHTML="",spd*0.8);const cSilOn=document.querySelector("#s-circle .silence-on"),cSilSec=Number(document.querySelector("#s-circle .silence-sec").value)||3;
     if(cSilOn&&cSilOn.checked)setTimeout(()=>{if(!silenceLock)beginSilence(cSilSec);},spd*0.82);},spd);};
 $("#circleStop").onclick=()=>stopCircle(true);
-function stopCircle(log){clearInterval(circleIv);clearInterval(circleCd);if(log){$("#circleField").innerHTML="";$("#circleTimer").textContent="停止";addShun("円形",$("#circleTime").value,$("#circleSpeed").value+"秒");}}
+function stopCircle(log){clearInterval(circleIv);clearInterval(circleCd);if(log){bgm.stop();$("#circleField").innerHTML="";$("#circleTimer").textContent="停止";addShun("円形",$("#circleTime").value,$("#circleSpeed").value+"秒");}}
 
 let randIv,randCd;
-$("#randStart").onclick=()=>{stopRand();
+$("#randStart").onclick=()=>{bgm.play();stopRand();
   let total=Number($("#randTime").value)*60,spd=Number($("#randSpeed").value)*1000;$("#randTimer").textContent=fmt(total);
   randCd=setInterval(()=>{total--;$("#randTimer").textContent=fmt(total);if(total<=0)stopRand(true);},1000);
   const f=$("#randField");
@@ -709,7 +799,7 @@ $("#randStart").onclick=()=>{stopRand();
     setTimeout(()=>f.innerHTML="",spd*0.8);const rSilOn=document.querySelector("#s-rand .silence-on"),rSilSec=Number(document.querySelector("#s-rand .silence-sec").value)||3;
     if(rSilOn&&rSilOn.checked)setTimeout(()=>{if(!silenceLock)beginSilence(rSilSec);},spd*0.82);},spd);};
 $("#randStop").onclick=()=>stopRand(true);
-function stopRand(log){clearInterval(randIv);clearInterval(randCd);if(log){$("#randField").innerHTML="";$("#randTimer").textContent="停止";addShun("ランダム",$("#randTime").value,$("#randSpeed").value+"秒");}}
+function stopRand(log){clearInterval(randIv);clearInterval(randCd);if(log){bgm.stop();$("#randField").innerHTML="";$("#randTimer").textContent="停止";addShun("ランダム",$("#randTime").value,$("#randSpeed").value+"秒");}}
 
 /* イメージ力（一文を一気に表示） */
 let imgCharIdx=0,imgCharIv=null,imgSentenceCache=[];
@@ -735,7 +825,7 @@ function imgStartFlash(){
     else $("#imgAnswer").style.display="block";
   },duration);
 }
-$("#imgStart").onclick=()=>{imgCharIdx=rand(0,Math.max(0,(imgSentenceCache.length||3)-1));imgStartFlash();};
+$("#imgStart").onclick=()=>{bgm.play();imgCharIdx=rand(0,Math.max(0,(imgSentenceCache.length||3)-1));imgStartFlash();};
 $("#imgNext").onclick=()=>{clearTimeout(imgCharIv);imgCharIdx++;imgStartFlash();};
 (()=>{
   const log=(label)=>()=>{addShun("イメージ力",0,label);$("#imgResult").innerHTML=`<span class="pill">${label}</span>`;$("#imgAnswer").style.display="none";};
@@ -786,6 +876,7 @@ $("#stCheck").onclick=()=>{
 
 /* 初期描画 */
 drawShunChart();
+initBgmUI();
 
 /* ============================================================
    速読テスト
