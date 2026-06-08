@@ -104,6 +104,9 @@ main{max-width:980px;margin:0 auto;padding:1.4rem 1.1rem 5rem;}
 .menu-card:nth-child(3){animation-delay:.12s}.menu-card:nth-child(4){animation-delay:.17s}
 .menu-card:nth-child(5){animation-delay:.22s}.menu-card:nth-child(6){animation-delay:.27s}
 .menu-card:nth-child(7){animation-delay:.32s}.menu-card:nth-child(8){animation-delay:.37s}
+.menu-card:nth-child(9){animation-delay:.42s}.menu-card:nth-child(10){animation-delay:.47s}
+.menu-card:nth-child(11){animation-delay:.52s}.menu-card:nth-child(12){animation-delay:.57s}
+.menu-card:nth-child(13){animation-delay:.62s}.menu-card:nth-child(14){animation-delay:.67s}
 
 /* 詳細画面：カードから開く演出 */
 .detail{display:none;}
@@ -201,6 +204,14 @@ canvas{margin-top:1rem;max-height:300px;}
 .bgm-item:hover{background:color-mix(in srgb,var(--accent) 6%,transparent);}
 .bgm-item input[type=checkbox]{width:1rem;height:1rem;accent-color:var(--accent);flex-shrink:0;}
 .bgm-item .bgm-name{font-size:.9rem;flex:1;}
+/* ===== シュルテ表 ===== */
+.schulte-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid var(--line);border-radius:8px;font-weight:700;font-size:clamp(.7rem,3vw,1.25rem);cursor:pointer;transition:background .1s,border-color .1s;user-select:none;-webkit-user-select:none;}
+.schulte-cell:hover:not([disabled]){background:color-mix(in srgb,var(--accent) 12%,white);border-color:var(--accent);}
+.schulte-cell.found{background:color-mix(in srgb,var(--accent) 18%,white);color:var(--accent-d);border-color:var(--accent);cursor:default;opacity:.6;}
+.schulte-cell.wrong{animation:shake .3s ease;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+/* ===== N-バック ===== */
+#nbackStage{font-size:4rem;font-weight:700;min-height:8rem;display:flex;align-items:center;justify-content:center;background:#fff;border:1px dashed var(--line);border-radius:12px;font-family:"Zen Old Mincho",serif;color:var(--accent-d);margin:.6rem 0;}
 </style>
 </head>
 <body>
@@ -259,6 +270,9 @@ canvas{margin-top:1rem;max-height:300px;}
       <div class="menu-card" data-open="s-obs"><span class="ic">👁</span><h4>観察力</h4><p>マス目を丸ごと記憶</p><span class="arrow">→</span></div>
       <div class="menu-card" data-open="s-test"><span class="ic">🏁</span><h4>実力テスト</h4><p>到達桁数で称号判定</p><span class="arrow">→</span></div>
       <div class="menu-card" data-open="s-reading-test"><span class="ic">📏</span><h4>速読テスト</h4><p>速度×理解度を測定</p><span class="arrow">→</span></div>
+      <div class="menu-card" data-open="s-schulte"><span class="ic">🔢</span><h4>シュルテ表</h4><p>周辺視野・視線速度</p><span class="arrow">→</span></div>
+      <div class="menu-card" data-open="s-nback"><span class="ic">🧩</span><h4>N-バック課題</h4><p>ワーキングメモリ強化</p><span class="arrow">→</span></div>
+      <div class="menu-card" data-open="s-reminder"><span class="ic">🔔</span><h4>練習リマインダー</h4><p>通知で継続サポート</p><span class="arrow">→</span></div>
       <div class="menu-card" data-open="s-log"><span class="ic">📈</span><h4>記録</h4><p>練習履歴とグラフ</p><span class="arrow">→</span></div>
       <div class="menu-card" data-open="s-bgm"><span class="ic">🎵</span><h4>BGM設定</h4><p>トレーニング中の音楽</p><span class="arrow">→</span></div>
     </div>
@@ -484,6 +498,95 @@ canvas{margin-top:1rem;max-height:300px;}
     </div>
   </div>
 
+  <!-- シュルテ表 -->
+  <div class="detail" id="s-schulte" data-detail-group="shun">
+    <div class="backbar"><button class="back-btn" data-back="shun">← 一覧へ</button><span class="detail-title">🔢 シュルテ表</span></div>
+    <div class="card">
+      <span class="tag">周辺視野</span>
+      <h3>🔢 シュルテ表（数字探索）</h3>
+      <div class="why"><b>意義：</b>バラバラに配置された1〜Nの数字を順番に探してクリックします。視点の移動速度と周辺視野の広さを直接鍛えられる、欧米の速読訓練の定番メソッドです。<b>やり方：</b>「1」を見つけてクリック、次に「2」…と順に進めてください。目線を一点に固定し"面"で全体を捉える意識で。</div>
+      <div class="row">
+        <div>
+          <label>グリッドサイズ</label>
+          <select id="schulteSize">
+            <option value="3">3×3（入門 / 9マス）</option>
+            <option value="4">4×4（初級 / 16マス）</option>
+            <option value="5" selected>5×5（標準 / 25マス）</option>
+            <option value="6">6×6（上級 / 36マス）</option>
+            <option value="7">7×7（難 / 49マス）</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn" id="schulteStart" style="width:100%">開始</button>
+        </div>
+      </div>
+      <div id="schulteInfo" style="display:none;margin-top:.9rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem .8rem;background:var(--surface);border:1px solid var(--line);border-radius:8px;margin-bottom:.7rem">
+          <span>次の数字：<b id="schulteNext" style="font-size:1.6rem;font-family:'Zen Old Mincho',serif;color:var(--accent-d)">1</b></span>
+          <span id="schulteTimer" style="font-size:1.2rem;font-weight:700;font-variant-numeric:tabular-nums;color:var(--muted)">0.0秒</span>
+        </div>
+        <div id="schulteGrid" style="display:grid;gap:.35rem;max-width:380px;margin:0 auto"></div>
+      </div>
+      <div class="pills" id="schulteResult"></div>
+    </div>
+  </div>
+
+  <!-- N-バック課題 -->
+  <div class="detail" id="s-nback" data-detail-group="shun">
+    <div class="backbar"><button class="back-btn" data-back="shun">← 一覧へ</button><span class="detail-title">🧩 N-バック課題</span></div>
+    <div class="card">
+      <span class="tag">ワーキングメモリ</span>
+      <h3>🧩 N-バック課題</h3>
+      <div class="why"><b>意義：</b>次々と表示される文字を見ながら「N個前と同じかどうか」を判断します。ワーキングメモリを直接強化できる、神経科学的にエビデンスのある訓練法です。<b>やり方：</b>文字が表示されるたびに「N個前と同じ文字ならボタンを押す」。最初は1-backから慣れましょう。</div>
+      <div class="row3">
+        <div>
+          <label>N（難易度）</label>
+          <select id="nbackN">
+            <option value="1">1-back（入門）</option>
+            <option value="2" selected>2-back（標準）</option>
+            <option value="3">3-back（上級）</option>
+          </select>
+        </div>
+        <div><label>試行数</label><input type="number" id="nbackTrials" value="20" min="10" max="40" step="5"></div>
+        <div><label>表示時間（秒）</label><input type="number" id="nbackSpeed" value="2" min="1" max="4" step="0.5"></div>
+      </div>
+      <div class="btn-row"><button class="btn" id="nbackStart">開始</button></div>
+      <div id="nbackGame" style="display:none;margin-top:.6rem">
+        <div id="nbackStage">―</div>
+        <div style="text-align:center;color:var(--muted);font-size:.88rem;margin:.3rem 0" id="nbackProgress"></div>
+        <div style="text-align:center;margin-top:.7rem">
+          <button class="btn" id="nbackMatch" style="font-size:1.05rem;padding:.65rem 2.4rem">✓ 一致（N個前と同じ）</button>
+        </div>
+        <div id="nbackFeedback" style="text-align:center;min-height:1.5rem;font-weight:700;margin-top:.4rem;font-size:.95rem"></div>
+      </div>
+      <div class="pills" id="nbackResult"></div>
+    </div>
+  </div>
+
+  <!-- 練習リマインダー -->
+  <div class="detail" id="s-reminder" data-detail-group="shun">
+    <div class="backbar"><button class="back-btn" data-back="shun">← 一覧へ</button><span class="detail-title">🔔 練習リマインダー</span></div>
+    <div class="card">
+      <span class="tag">継続サポート</span>
+      <h3>🔔 練習リマインダー</h3>
+      <div class="why"><b>仕組み：</b>設定した時刻を過ぎても今日の練習が記録されていない場合、ブラウザ通知でお知らせします。<b>注意：</b>このページを開いている間のみ動作します。バックグラウンドでの通知には対応していません。</div>
+      <div class="row">
+        <div>
+          <label>リマインダー時刻</label>
+          <input type="time" id="reminderTime" value="20:00">
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn" id="reminderEnable" style="width:100%">通知を有効化</button>
+        </div>
+      </div>
+      <div class="note" id="reminderStatus" style="margin-top:.7rem;padding:.5rem .7rem;border-radius:8px;background:var(--surface);border:1px solid var(--line)">状態：確認中…</div>
+      <div class="btn-row" style="margin-top:.9rem">
+        <button class="btn ghost" id="reminderTest">テスト通知を送る</button>
+        <button class="btn danger" id="reminderDisable">無効化</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 記録 -->
   <div class="detail" id="s-log" data-detail-group="shun">
     <div class="backbar"><button class="back-btn" data-back="shun">← 一覧へ</button><span class="detail-title">📈 練習記録</span></div>
@@ -613,7 +716,7 @@ const shuffleChars=w=>{const a=[...w];for(let i=a.length-1;i>0;i--){const j=Math
 function setupTabs(group){
   $$(`[data-group="${group}"] .nav-tab`).forEach(tab=>{
     tab.addEventListener("click",()=>{
-      stopFlash();stopWord();stopCircle();stopRand();bgm.stop();
+      stopFlash();stopWord();stopCircle();stopRand();stopNback();stopSchulte();bgm.stop();
       const target=tab.dataset.target;
       $$(`[data-group="${group}"] .nav-tab`).forEach(t=>t.classList.remove("active"));
       tab.classList.add("active");
@@ -632,10 +735,12 @@ function openDetail(id){
   $$(`.detail[data-detail-group="${grp}"]`).forEach(d=>d.classList.remove("show"));
   el.classList.add("show");
   if(id==="s-log")drawShunChart();
+  if(id==="s-reminder"&&window.updateReminderStatus)window.updateReminderStatus();
   window.scrollTo({top:0,behavior:"smooth"});
 }
+let stopNback=()=>{},stopSchulte=()=>{};
 function backToMenu(grp){
-  stopFlash();stopWord();stopCircle();stopRand();clearTimeout(imgCharIv);bgm.stop();
+  stopFlash();stopWord();stopCircle();stopRand();clearTimeout(imgCharIv);stopNback();stopSchulte();bgm.stop();
   $$(`.detail[data-detail-group="${grp}"]`).forEach(d=>d.classList.remove("show"));
   const m=document.getElementById(grp+"-menu");m.classList.add("show");
   window.scrollTo({top:0,behavior:"smooth"});
@@ -962,6 +1067,235 @@ initBgmUI();
   };
 })();
 
+
+/* ============================================================
+   シュルテ表
+============================================================ */
+(function(){
+  let sz=5,nums=[],nextN=1,startMs=0,timerIv=null,running=false;
+
+  stopSchulte=function(){
+    clearInterval(timerIv);timerIv=null;running=false;
+  };
+
+  function renderGrid(){
+    const g=document.getElementById('schulteGrid');
+    g.style.gridTemplateColumns=`repeat(${sz},1fr)`;
+    g.innerHTML='';
+    nums.forEach(n=>{
+      const c=document.createElement('button');
+      c.className='schulte-cell';c.textContent=n;c.dataset.n=n;
+      c.addEventListener('click',()=>onCell(n,c));
+      g.appendChild(c);
+    });
+  }
+
+  function onCell(n,cell){
+    if(!running)return;
+    if(n!==nextN){cell.classList.add('wrong');setTimeout(()=>cell.classList.remove('wrong'),320);return;}
+    cell.classList.add('found');cell.disabled=true;
+    nextN++;
+    const nx=document.getElementById('schulteNext');
+    if(nextN>sz*sz){
+      clearInterval(timerIv);running=false;
+      const sec=((Date.now()-startMs)/1000).toFixed(2);
+      nx.textContent='完了!';
+      document.getElementById('schulteResult').innerHTML=
+        `<span class="pill">🏁 ${sec}秒</span><span class="pill">${sz}×${sz}</span>`;
+      addShun('シュルテ表',0,`${sec}秒 (${sz}×${sz})`);
+    }else{
+      nx.textContent=nextN;
+    }
+  }
+
+  document.getElementById('schulteStart').onclick=()=>{
+    stopSchulte();
+    sz=Number(document.getElementById('schulteSize').value);
+    const total=sz*sz;
+    nums=Array.from({length:total},(_,i)=>i+1);
+    for(let i=total-1;i>0;i--){const j=rand(0,i);[nums[i],nums[j]]=[nums[j],nums[i]];}
+    nextN=1;running=true;
+    document.getElementById('schulteInfo').style.display='block';
+    document.getElementById('schulteNext').textContent='1';
+    document.getElementById('schulteResult').innerHTML='';
+    renderGrid();
+    startMs=Date.now();
+    timerIv=setInterval(()=>{
+      if(running)document.getElementById('schulteTimer').textContent=
+        ((Date.now()-startMs)/1000).toFixed(1)+'秒';
+    },100);
+  };
+})();
+
+/* ============================================================
+   N-バック課題
+============================================================ */
+(function(){
+  const STIM='アイウエオカキクケコサシスセソタチツ'.split('');
+  let nbN=2,seq=[],flags=[],curIdx=0,responded=false;
+  let hit=0,miss=0,fa=0,cr=0,nbTimer=null,running=false;
+
+  stopNback=function(){
+    clearTimeout(nbTimer);nbTimer=null;running=false;
+    const g=document.getElementById('nbackGame');if(g)g.style.display='none';
+  };
+
+  function generate(n,total){
+    seq=[];flags=[];
+    for(let i=0;i<total;i++){
+      /* ~35% マッチ率（最初のN個は必ず非マッチ） */
+      if(i<n||Math.random()>0.35){
+        let s;
+        /* 非マッチを保証 */
+        do{s=STIM[rand(0,STIM.length-1)];}while(i>=n&&s===seq[i-n]);
+        seq.push(s);flags.push(false);
+      }else{
+        seq.push(seq[i-n]);flags.push(true);
+      }
+    }
+  }
+
+  function showNext(){
+    if(!running)return;
+    if(curIdx>=seq.length){nbEnd();return;}
+    responded=false;
+    const stim=seq[curIdx];
+    const stage=document.getElementById('nbackStage');
+    stage.textContent=stim;
+    stage.style.animation='none';
+    setTimeout(()=>stage.style.animation='pop .25s ease',10);
+    document.getElementById('nbackProgress').textContent=`${curIdx+1} / ${seq.length} 試行`;
+    const fb=document.getElementById('nbackFeedback');fb.textContent='';fb.style.color='';
+    const spd=Number(document.getElementById('nbackSpeed').value)*1000;
+    nbTimer=setTimeout(()=>{
+      if(!running)return;
+      /* 採点（最初のN試行はスキップ） */
+      if(curIdx>=nbN){
+        if(flags[curIdx]&&responded)hit++;
+        else if(flags[curIdx]&&!responded){miss++;fb.textContent='△ 見逃し';fb.style.color='#e67e22';}
+        else if(!flags[curIdx]&&responded){fa++;fb.textContent='✗ 誤報';fb.style.color='#c0392b';}
+        else cr++;
+      }
+      curIdx++;
+      nbTimer=setTimeout(showNext,350);
+    },spd);
+  }
+
+  function nbEnd(){
+    running=false;
+    document.getElementById('nbackGame').style.display='none';
+    const scorable=Math.max(1,seq.length-nbN);
+    const acc=Math.round((hit+cr)/scorable*100);
+    const lvl=acc>=90?'🏆 優秀':acc>=75?'✅ 良好':acc>=60?'📚 練習中':'🌱 入門';
+    document.getElementById('nbackResult').innerHTML=
+      `<span class="pill">正答率：${acc}%</span>`+
+      `<span class="pill">ヒット：${hit}回</span>`+
+      `<span class="pill">見逃し：${miss}回</span>`+
+      `<span class="pill">誤報：${fa}回</span>`+
+      `<span class="pill">${lvl}</span>`;
+    addShun(nbN+'-バック',0,`${acc}%`);
+  }
+
+  document.getElementById('nbackStart').onclick=()=>{
+    stopNback();
+    nbN=Number(document.getElementById('nbackN').value);
+    const total=Number(document.getElementById('nbackTrials').value);
+    generate(nbN,total);
+    curIdx=0;hit=miss=fa=cr=0;running=true;
+    document.getElementById('nbackGame').style.display='block';
+    document.getElementById('nbackResult').innerHTML='';
+    showNext();
+  };
+
+  document.getElementById('nbackMatch').onclick=()=>{
+    if(!running||responded)return;
+    responded=true;
+    if(curIdx>=nbN){
+      const fb=document.getElementById('nbackFeedback');
+      if(flags[curIdx]){fb.textContent='✓ 正解！';fb.style.color='#27ae60';}
+      else{fb.textContent='✗ 一致していません';fb.style.color='#c0392b';}
+    }
+  };
+})();
+
+/* ============================================================
+   練習リマインダー
+============================================================ */
+(function(){
+  const RKEY='shun_reminder',NKEY='shun_notified_date';
+  function getSettings(){try{return JSON.parse(localStorage.getItem(RKEY)||'null');}catch{return null;}}
+  function saveSettings(s){localStorage.setItem(RKEY,JSON.stringify(s));}
+
+  function updateStatus(){
+    const el=document.getElementById('reminderStatus');if(!el)return;
+    const s=getSettings();
+    if(!('Notification' in window)){el.textContent='状態：このブラウザは通知非対応です';return;}
+    if(!s||!s.enabled){el.textContent='状態：無効';return;}
+    const p=Notification.permission;
+    if(p!=='granted'){el.textContent='状態：通知許可が必要（ブラウザ設定で許可してください）';return;}
+    el.textContent=`状態：有効 ── 毎日 ${s.time} 以降、未練習なら通知します`;
+  }
+  window.updateReminderStatus=updateStatus;
+
+  function checkReminder(){
+    const s=getSettings();
+    if(!s||!s.enabled)return;
+    if(!('Notification' in window)||Notification.permission!=='granted')return;
+    const now=new Date();
+    const [h,m]=s.time.split(':').map(Number);
+    const fireAt=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,m,0);
+    if(now<fireAt)return;
+    const todayStr=now.toDateString();
+    if(localStorage.getItem(NKEY)===todayStr)return;
+    const practiced=getShun().some(x=>{
+      try{return new Date(x.date).toDateString()===todayStr;}catch{return false;}
+    });
+    if(practiced)return;
+    localStorage.setItem(NKEY,todayStr);
+    new Notification('瞬読トレーニング',{
+      body:'今日の練習がまだです。5分だけでもやってみましょう！',
+      icon:'icons/icon-180.png'
+    });
+  }
+
+  document.getElementById('reminderEnable').onclick=async()=>{
+    const time=document.getElementById('reminderTime').value;
+    if(!time)return alert('時刻を設定してください');
+    if(!('Notification' in window))return alert('このブラウザは通知をサポートしていません');
+    let p=Notification.permission;
+    if(p==='default')p=await Notification.requestPermission();
+    if(p!=='granted'){alert('通知が拒否されました。ブラウザのアドレスバー横の🔒アイコンから通知を許可してください。');updateStatus();return;}
+    saveSettings({enabled:true,time});
+    updateStatus();
+    checkReminder();
+  };
+
+  document.getElementById('reminderDisable').onclick=()=>{
+    const s=getSettings();
+    saveSettings({enabled:false,time:(s&&s.time)||'20:00'});
+    updateStatus();
+  };
+
+  document.getElementById('reminderTest').onclick=async()=>{
+    if(!('Notification' in window))return alert('このブラウザは通知をサポートしていません');
+    let p=Notification.permission;
+    if(p==='default')p=await Notification.requestPermission();
+    if(p!=='granted'){alert('通知が拒否されています。ブラウザ設定で許可してください。');return;}
+    new Notification('瞬読トレーニング（テスト）',{
+      body:'リマインダー通知が正常に動作しています！',
+      icon:'icons/icon-180.png'
+    });
+  };
+
+  /* 既存設定の復元 */
+  const s=getSettings();
+  if(s&&s.time){const el=document.getElementById('reminderTime');if(el)el.value=s.time;}
+
+  /* ページロード時チェック＋5分おきに再チェック */
+  setTimeout(checkReminder,2000);
+  setInterval(checkReminder,5*60*1000);
+  setTimeout(updateStatus,100);
+})();
 
 /* Service Worker 登録 */
 if ("serviceWorker" in navigator) {
